@@ -7,15 +7,37 @@
 . ../slack-package.conf
 
 NAME=libsigc++
-VERSION=2.2.3
+VERSION=2.2.4.2
 BUILD=1
 
+TMP=${TMP:-/tmp}
+CWD=${CWD:-`pwd`}
+PKG_DIR=${PKG_DIR:-/tmp}
+
+if [ ! -e $TMP ]; then
+  mkdir -p $TMP # location to build the source
+fi
+
+SRC=$TMP/$NAME-$VERSION
+if [ -e $SRC -a -d $SRC ]; then
+  echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
+  exit 1
+fi
+
+PKG=$TMP/package-$NAME
+if [ -e $PKG -a -d $PKG ]; then
+  echo "Package creation directory '$PKG' already exists! Please, move it or remove it."
+  exit 2
+fi
+mkdir -p $PKG
+
+# Extract source
 cd $TMP
 tar -jxvf $CWD/$NAME-$VERSION.tar.bz2
-SRC=$TMP/$NAME-$VERSION
 cd $SRC
 fix_source
 
+# Configure
 CFLAGS=$SLKCFLAGS \
 CXXFLAGS=$SLKCFLAGS \
 ./configure --build=$ARCH-slackware-linux \
@@ -25,34 +47,27 @@ CXXFLAGS=$SLKCFLAGS \
 	    --enable-shared=yes \
 	    --enable-static=no || exit 1
 
+# Build & install
 make -j4 || exit 2
-
-PKG="$TMP/package-$NAME"
-mkdir -p $PKG
-
 make DESTDIR=$PKG install || exit 3
 
 ( cd $PKG; strip_lib )
-DOCFILES="ABOUT ABOUT-NLS ANNOUNCE AUTHORS CONFIGURATION CHANGES COPYING COPYRIGHT CREDITS ChangeLog \
-Changelog CHANGELOG CONTRIBUTORS *FAQ* FEATURES FILES HACKING History HISTORY INSTALL* LICENSE LSM \
-MANIFEST NEWS *README* *Readme* SITES *RELEASE* RELNOTES THANKS TIPS TODO VERSION CONFIGURATION* \
-GPL License Doc doc Roadmap ROADMAP *BUGS* index.ht* *INDEX*"
 ( cd $SRC; create_docs $PKG $NAME-$VERSION )
 
 mkdir -p $PKG/install
-install -m 644 $CWD/slack-desc     $PKG/install
-install -m 644 $CWD/slack-required $PKG/install
+install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
+install -m 644 $CWD/slack-required $PKG/install/slack-required
 
 mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
+install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
+install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
 
 cd $PKG
 PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
-makepkg -l y -c n $PKG_DIR/$PKGNAME.tgz
+makepkg -l y -c n $PKG_DIR/$PKGNAME.txz
 cd $PKG_DIR
-md5sum $PKGNAME.tgz > $PKGNAME.tgz.md5
+md5sum $PKGNAME.txz > $PKGNAME.txz.md5
 cat $PKG/install/slack-desc > $PKG_DIR/$PKGNAME.txt
 
 if [ "$1" == "--cleanup" ]; then

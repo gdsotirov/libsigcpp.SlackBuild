@@ -7,7 +7,7 @@
 . ../slack-package.conf
 
 NAME=libsigc++
-VERSION=2.2.4.2
+VERSION=2.2.8
 BUILD=1
 
 TMP=${TMP:-/tmp}

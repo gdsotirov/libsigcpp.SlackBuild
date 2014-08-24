@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Slackware build script for LibSigC++
-# Copyright (C) 2007-2012 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2007-2014 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -17,13 +17,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # 
-# $Id: libsigc++.SlackBuild,v 1.7 2012/01/02 16:52:59 gsotirov Exp $
+# $Id: libsigc++.SlackBuild,v 1.8 2014/08/24 18:04:20 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=libsigc++
-VERSION=2.2.10
+VERSION=2.2.11
 BUILD=${BUILD:-1}
 
 TMP=${TMP:-/tmp}
@@ -49,7 +49,7 @@ mkdir -p $PKG
 
 # Extract source
 cd $TMP
-tar -xvf $CWD/$NAME-$VERSION.tar.bz2 || exit 3
+tar -xvf $CWD/$NAME-$VERSION.tar.?z* || exit 3
 cd $SRC
 fix_source
 

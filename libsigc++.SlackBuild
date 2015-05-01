@@ -17,13 +17,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # 
-# $Id: libsigc++.SlackBuild,v 1.9 2015/04/25 12:05:43 gsotirov Exp $
+# $Id: libsigc++.SlackBuild,v 1.10 2015/05/01 07:25:16 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=libsigc++
-VERSION=2.3.2
+VERSION=2.4.1
 BUILD=${BUILD:-1}
 
 TMP=${TMP:-/tmp}
@@ -65,7 +65,7 @@ CXXFLAGS=$SLKCFLAGS \
 	    --enable-static=no || exit 4
 
 # Build & install
-make -j4 || exit 5
+make -j || exit 5
 make DESTDIR=$PKG install || exit 6
 
 # Prepare
